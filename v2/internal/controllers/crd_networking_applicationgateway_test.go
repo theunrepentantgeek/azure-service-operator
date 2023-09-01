@@ -38,17 +38,20 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 	}
 	publicIPAddress := newPublicIp(tc, testcommon.AsOwner(rg))
 	tc.CreateResourcesAndWait(publicIPAddress, vnet, subnet)
+
 	tc.Expect(vnet.Status.Id).ToNot(BeNil())
 	tc.Expect(subnet.Status.Id).ToNot(BeNil())
-	appGtsListnerName := "app-gw-http-listner-1"
-	httpListnerParams := map[string]string{
+
+	appGtsListenerName := "app-gw-http-listener-1"
+	httpListenerParams := map[string]string{
 		"param-key1": "applicationGateways",
 		"param-val1": appGatewayName,
 		"param-key2": "httpListeners",
-		"param-val2": appGtsListnerName,
+		"param-val2": appGtsListenerName,
 	}
-	appGtwFHttpListnerID, err := getFrontendPortsARMID(tc, rg, httpListnerParams)
+	appGtwFHttpListenerID, err := getFrontendPortsARMID(tc, rg, httpListenerParams)
 	tc.Expect(err).To(BeNil())
+
 	appGtwFIPConfig := defineApplicationGatewayIPConfiguration(tc.MakeReferenceFromResource(subnet))
 	appGtwFeIpConfig, appGtwFeIpConfigID := defineApplicationGatewayFrontendIPConfiguration(tc, rg, appGatewayName, tc.MakeReferenceFromResource(subnet), tc.MakeReferenceFromResource(publicIPAddress))
 	appGtwFEPorts, appGtwFePortsID := defineApplicationGatewayFrontendPort(tc, rg, appGatewayName)
@@ -86,7 +89,7 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 			WebApplicationFirewallConfiguration: appGtwWafConfig,
 			HttpListeners: []network.ApplicationGatewayHttpListener{
 				{
-					Name: to.Ptr(appGtsListnerName),
+					Name: to.Ptr(appGtsListenerName),
 					FrontendIPConfiguration: &network.ApplicationGatewaySubResource{
 						Reference: &genruntime.ResourceReference{
 							ARMID: appGtwFeIpConfigID,
@@ -123,7 +126,7 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 					},
 					HttpListener: &network.ApplicationGatewaySubResource{
 						Reference: &genruntime.ResourceReference{
-							ARMID: appGtwFHttpListnerID,
+							ARMID: appGtwFHttpListenerID,
 						},
 					},
 					RuleType: to.Ptr(network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType(network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType_Basic)),
