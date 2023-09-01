@@ -60,8 +60,10 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 	appGtwBackendPools, appGtwBackendPoolsID := defineApplicationGatewayBackendAddressPool(tc, rg, appGatewayName)
 	appGtwBackendHttpSettings, appGtwBackendHttpSettingsID := defineApplicationGatewayBackendHttpSettings(tc, rg, appGatewayName)
 	appGtwWafConfig, appGtwWafConfigID := defineApplicationGatewayWebApplicationFirewallConfiguration(tc, rg, appGatewayName)
-	log.Println(appGtwSslProfilesID)
-	log.Println(appGtwWafConfigID)
+
+	tc.T.Log("SSL Profile ID: ", appGtwSslProfilesID)
+	tc.T.Log("Firewall ARM ID", appGtwWafConfigID)
+
 	applicationGateway := &network.ApplicationGateway{
 		ObjectMeta: tc.MakeObjectMetaWithName(appGatewayName),
 		Spec: network.ApplicationGateway_Spec{
