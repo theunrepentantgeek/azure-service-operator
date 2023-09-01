@@ -63,15 +63,15 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 		ObjectMeta: tc.MakeObjectMetaWithName(appGatewayName),
 		Spec: network.ApplicationGateway_Spec{
 			AutoscaleConfiguration: &network.ApplicationGatewayAutoscaleConfiguration{
-				MaxCapacity: to.Ptr[int](3),
-				MinCapacity: to.Ptr[int](1),
+				MaxCapacity: to.Ptr(3),
+				MinCapacity: to.Ptr(1),
 			},
 			AzureName: appGatewayName,
-			Location:  to.Ptr[string](rg.Location()),
+			Location:  to.Ptr(rg.Location()),
 			Owner:     testcommon.AsOwner(rg),
 			Sku: &network.ApplicationGatewaySku{
-				Name: to.Ptr[network.ApplicationGatewaySku_Name](network.ApplicationGatewaySku_Name(network.ApplicationGatewaySku_Name_STATUS_WAF_V2)),
-				Tier: to.Ptr[network.ApplicationGatewaySku_Tier](network.ApplicationGatewaySku_Tier(network.ApplicationGatewaySku_Tier_STATUS_WAF_V2)),
+				Name: to.Ptr(network.ApplicationGatewaySku_Name(network.ApplicationGatewaySku_Name_STATUS_WAF_V2)),
+				Tier: to.Ptr(network.ApplicationGatewaySku_Tier(network.ApplicationGatewaySku_Tier_STATUS_WAF_V2)),
 			},
 			GatewayIPConfigurations:  appGtwFIPConfig,
 			FrontendIPConfigurations: appGtwFeIpConfig,
@@ -79,14 +79,14 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 			FrontendPorts:   appGtwFEPorts,
 			SslCertificates: appGtwSslCerts,
 			SslProfiles:     appGtwSslProfiles,
-			SslPolicy: to.Ptr[network.ApplicationGatewaySslPolicy](network.ApplicationGatewaySslPolicy{
-				PolicyName: to.Ptr[network.PolicyNameEnum](network.PolicyNameEnum(network.PolicyNameEnum_AppGwSslPolicy20220101S)),
-				PolicyType: to.Ptr[network.ApplicationGatewaySslPolicy_PolicyType](network.ApplicationGatewaySslPolicy_PolicyType(network.ApplicationGatewaySslPolicy_PolicyType_Predefined)),
+			SslPolicy: to.Ptr(network.ApplicationGatewaySslPolicy{
+				PolicyName: to.Ptr(network.PolicyNameEnum(network.PolicyNameEnum_AppGwSslPolicy20220101S)),
+				PolicyType: to.Ptr(network.ApplicationGatewaySslPolicy_PolicyType(network.ApplicationGatewaySslPolicy_PolicyType_Predefined)),
 			}),
 			WebApplicationFirewallConfiguration: appGtwWafConfig,
 			HttpListeners: []network.ApplicationGatewayHttpListener{
 				{
-					Name: to.Ptr[string](appGtsListnerName),
+					Name: to.Ptr(appGtsListnerName),
 					FrontendIPConfiguration: &network.ApplicationGatewaySubResource{
 						Reference: &genruntime.ResourceReference{
 							ARMID: appGtwFeIpConfigID,
@@ -97,7 +97,7 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 							ARMID: appGtwFePortsID,
 						},
 					},
-					Protocol:  to.Ptr[network.ApplicationGatewayProtocol](network.ApplicationGatewayProtocol(network.ApplicationGatewayProtocol_Https)),
+					Protocol:  to.Ptr(network.ApplicationGatewayProtocol(network.ApplicationGatewayProtocol_Https)),
 					HostNames: []string{"test.contoso.com"},
 					SslCertificate: &network.ApplicationGatewaySubResource{
 						Reference: &genruntime.ResourceReference{
@@ -110,7 +110,7 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 			BackendHttpSettingsCollection: appGtwBackendHttpSettings,
 			RequestRoutingRules: []network.ApplicationGatewayRequestRoutingRule{
 				{
-					Name: to.Ptr[string]("app-gtw-routing-rule-1"),
+					Name: to.Ptr("app-gtw-routing-rule-1"),
 					BackendAddressPool: &network.ApplicationGatewaySubResource{
 						Reference: &genruntime.ResourceReference{
 							ARMID: appGtwBackendPoolsID,
@@ -126,8 +126,8 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 							ARMID: appGtwFHttpListnerID,
 						},
 					},
-					RuleType: to.Ptr[network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType](network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType(network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType_Basic)),
-					Priority: to.Ptr[int](100),
+					RuleType: to.Ptr(network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType(network.ApplicationGatewayRequestRoutingRulePropertiesFormat_RuleType_Basic)),
+					Priority: to.Ptr(100),
 				},
 			},
 		},
@@ -135,6 +135,7 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 	tc.CreateResourceAndWait(applicationGateway)
 	tc.Expect(applicationGateway.Status.Id).ToNot(BeNil())
 	tc.Expect(applicationGateway.Status.Sku.Tier).To(Equal(network.ApplicationGatewaySku_Tier_STATUS_WAF_V2))
+
 	armId := *applicationGateway.Status.Id
 	tc.DeleteResourceAndWait(applicationGateway)
 	tc.DeleteResourceAndWait(publicIPAddress)
@@ -151,7 +152,7 @@ func defineApplicationGatewayIPConfiguration(subnet *genruntime.ResourceReferenc
 	subResName := "app-gw-ip-config-1"
 	appGtwFeIpConfig := []network.ApplicationGatewayIPConfiguration_ApplicationGateway_SubResourceEmbedded{
 		{
-			Name: to.Ptr[string](subResName),
+			Name: to.Ptr(subResName),
 			Subnet: &network.ApplicationGatewaySubResource{
 				Reference: subnet,
 			},
@@ -163,11 +164,11 @@ func defineApplicationGatewayIPConfiguration(subnet *genruntime.ResourceReferenc
 
 func defineApplicationGatewayWebApplicationFirewallConfiguration(tc *testcommon.KubePerTestContext, rg *resources.ResourceGroup, appGatewayName string) (*network.ApplicationGatewayWebApplicationFirewallConfiguration, string) {
 	subResname := "app-gw-waf-config-1"
-	subRes := to.Ptr[network.ApplicationGatewayWebApplicationFirewallConfiguration](network.ApplicationGatewayWebApplicationFirewallConfiguration{
-		Enabled:        to.Ptr[bool](true),
-		FirewallMode:   to.Ptr[network.ApplicationGatewayWebApplicationFirewallConfiguration_FirewallMode](network.ApplicationGatewayWebApplicationFirewallConfiguration_FirewallMode(network.ApplicationGatewayWebApplicationFirewallConfiguration_FirewallMode_Detection)),
-		RuleSetType:    to.Ptr[string]("OWASP"),
-		RuleSetVersion: to.Ptr[string]("3.2"),
+	subRes := to.Ptr(network.ApplicationGatewayWebApplicationFirewallConfiguration{
+		Enabled:        to.Ptr(true),
+		FirewallMode:   to.Ptr(network.ApplicationGatewayWebApplicationFirewallConfiguration_FirewallMode(network.ApplicationGatewayWebApplicationFirewallConfiguration_FirewallMode_Detection)),
+		RuleSetType:    to.Ptr("OWASP"),
+		RuleSetVersion: to.Ptr("3.2"),
 	})
 	armid_params := map[string]string{
 		"param-key1": "applicationGateways",
@@ -185,15 +186,15 @@ func defineApplicationGatewayFrontendIPConfiguration(tc *testcommon.KubePerTestC
 	appGtwFeIpName2 := "app-gw-fip-config-2"
 	appGtwFeIpConfig := []network.ApplicationGatewayFrontendIPConfiguration{
 		{
-			Name:                      to.Ptr[string](appGtwFeIpName),
-			PrivateIPAddress:          to.Ptr[string]("10.0.0.10"),
-			PrivateIPAllocationMethod: to.Ptr[network.IPAllocationMethod](network.IPAllocationMethod("Static")),
+			Name:                      to.Ptr(appGtwFeIpName),
+			PrivateIPAddress:          to.Ptr("10.0.0.10"),
+			PrivateIPAllocationMethod: to.Ptr(network.IPAllocationMethod("Static")),
 			Subnet: &network.ApplicationGatewaySubResource{
 				Reference: subnet,
 			},
 		},
 		{
-			Name: to.Ptr[string](appGtwFeIpName2),
+			Name: to.Ptr(appGtwFeIpName2),
 			PublicIPAddress: &network.ApplicationGatewaySubResource{
 				Reference: publicIP,
 			},
@@ -214,8 +215,8 @@ func defineApplicationGatewayFrontendPort(tc *testcommon.KubePerTestContext, rg 
 	appGtwFePortName := "app-gw-fe-port-1"
 	AppGtwFEPorts := []network.ApplicationGatewayFrontendPort{
 		{
-			Name: to.Ptr[string](appGtwFePortName),
-			Port: to.Ptr[int](443),
+			Name: to.Ptr(appGtwFePortName),
+			Port: to.Ptr(443),
 		},
 	}
 	armid_params := map[string]string{
@@ -233,9 +234,9 @@ func defineApplicationGatewaySslCertificate(tc *testcommon.KubePerTestContext, r
 	subResname := "app-gw-sslcert-1"
 	subRes := []network.ApplicationGatewaySslCertificate{
 		{
-			//KeyVaultSecretId: to.Ptr[string]("https://keyvaultname.vault.azure.net/secrets/secretname"),
-			Name: to.Ptr[string](subResname),
-			Data: to.Ptr[string](`MIIKEQIBAzCCCdcGCSqGSIb3DQEHAaCCCcgEggnEMIIJwDCCBHcGCSqGSIb3DQEH
+			//KeyVaultSecretId: to.Ptr("https://keyvaultname.vault.azure.net/secrets/secretname"),
+			Name: to.Ptr(subResname),
+			Data: to.Ptr(`MIIKEQIBAzCCCdcGCSqGSIb3DQEHAaCCCcgEggnEMIIJwDCCBHcGCSqGSIb3DQEH
 			BqCCBGgwggRkAgEAMIIEXQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQIla+W
 			nqLFehECAggAgIIEMHvDS99b6tAa7Ovg+OGmXTCgW9/RULpALq033njhKAejGW6u
 			dSfboMC5EHDO1Tq0b5FzxTzgEuvhEX0DSbIZtxMF8UUgJBog/WyjnSzUl5bkTosa
@@ -306,15 +307,15 @@ func defineApplicationGatewaySslProfile(tc *testcommon.KubePerTestContext, rg *r
 	subResname := "app-gw-ssl-profile-1"
 	subRes := []network.ApplicationGatewaySslProfile{
 		{
-			Name: to.Ptr[string](subResname),
+			Name: to.Ptr(subResname),
 			SslPolicy: &network.ApplicationGatewaySslPolicy{
-				//MinProtocolVersion: to.Ptr[network.ProtocolsEnum](network.ProtocolsEnum(network.ProtocolsEnum_STATUS_TLSv1_2)),
+				//MinProtocolVersion: to.Ptr(network.ProtocolsEnum(network.ProtocolsEnum_STATUS_TLSv1_2)),
 				/*CipherSuites: []network.CipherSuitesEnum{
 					network.CipherSuitesEnum(network.CipherSuitesEnum_TLS_RSA_WITH_AES_256_CBC_SHA256),
 					network.CipherSuitesEnum(network.CipherSuitesEnum_TLS_RSA_WITH_AES_256_CBC_SHA),
 				},*/
-				PolicyName: to.Ptr[network.PolicyNameEnum](network.PolicyNameEnum(network.PolicyNameEnum_AppGwSslPolicy20220101S)),
-				PolicyType: to.Ptr[network.ApplicationGatewaySslPolicy_PolicyType](network.ApplicationGatewaySslPolicy_PolicyType(network.ApplicationGatewaySslPolicy_PolicyType_Predefined)),
+				PolicyName: to.Ptr(network.PolicyNameEnum(network.PolicyNameEnum_AppGwSslPolicy20220101S)),
+				PolicyType: to.Ptr(network.ApplicationGatewaySslPolicy_PolicyType(network.ApplicationGatewaySslPolicy_PolicyType_Predefined)),
 			},
 		},
 	}
@@ -333,10 +334,10 @@ func defineApplicationGatewayBackendAddressPool(tc *testcommon.KubePerTestContex
 	subResname := "app-gw-be-pool-1"
 	subRes := []network.ApplicationGatewayBackendAddressPool{
 		{
-			Name: to.Ptr[string](subResname),
+			Name: to.Ptr(subResname),
 			BackendAddresses: []network.ApplicationGatewayBackendAddress{
 				{
-					IpAddress: to.Ptr[string]("10.0.1.1"),
+					IpAddress: to.Ptr("10.0.1.1"),
 				},
 			},
 		},
@@ -356,11 +357,11 @@ func defineApplicationGatewayBackendHttpSettings(tc *testcommon.KubePerTestConte
 	subResname := "app-gw-be-http-setting-1"
 	subRes := []network.ApplicationGatewayBackendHttpSettings{
 		{
-			Name:                           to.Ptr[string](subResname),
-			Port:                           to.Ptr[int](8443),
-			Protocol:                       to.Ptr[network.ApplicationGatewayProtocol](network.ApplicationGatewayProtocol(network.ApplicationGatewayProtocol_Https)),
-			CookieBasedAffinity:            to.Ptr[network.ApplicationGatewayBackendHttpSettingsPropertiesFormat_CookieBasedAffinity](network.ApplicationGatewayBackendHttpSettingsPropertiesFormat_CookieBasedAffinity_Disabled),
-			PickHostNameFromBackendAddress: to.Ptr[bool](false),
+			Name:                           to.Ptr(subResname),
+			Port:                           to.Ptr(8443),
+			Protocol:                       to.Ptr(network.ApplicationGatewayProtocol(network.ApplicationGatewayProtocol_Https)),
+			CookieBasedAffinity:            to.Ptr(network.ApplicationGatewayBackendHttpSettingsPropertiesFormat_CookieBasedAffinity_Disabled),
+			PickHostNameFromBackendAddress: to.Ptr(false),
 		},
 	}
 	armid_params := map[string]string{
