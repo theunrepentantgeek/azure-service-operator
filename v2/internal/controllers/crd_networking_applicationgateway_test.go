@@ -139,7 +139,9 @@ func Test_Networking_ApplicationGateway_HTTPS_Listener_CRUD(t *testing.T) {
 	}
 	tc.CreateResourceAndWait(applicationGateway)
 	tc.Expect(applicationGateway.Status.Id).ToNot(BeNil())
-	tc.Expect(applicationGateway.Status.Sku.Tier).To(Equal(network.ApplicationGatewaySku_Tier_STATUS_WAF_V2))
+	tc.Expect(applicationGateway.Status.Sku).ToNot(BeNil())
+	tc.Expect(applicationGateway.Status.Sku.Tier).ToNot(BeNil())
+	tc.Expect(*applicationGateway.Status.Sku.Tier).To(Equal(network.ApplicationGatewaySku_Tier_STATUS_WAF_V2))
 
 	armId := *applicationGateway.Status.Id
 	tc.DeleteResourceAndWait(applicationGateway)
