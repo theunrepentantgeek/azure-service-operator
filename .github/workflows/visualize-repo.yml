@@ -13,7 +13,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/create-github-app-token@v1
+      - name: Create token
+        uses: actions/create-github-app-token@v1
         id: app-token
         with:
           # required
