@@ -448,6 +448,12 @@ typeTransformers:
     remove: true
     because: These properties should be marked readonly
 
+  - group: redhatopenshift
+    name: OpenShiftClusterProperties
+    property: ProvisioningState
+    remove: true
+    because: This property should be marked readonly in Swagger
+
   - group: search
     name: DataPlaneAuthOptions
     property: ApiKeyOnly
@@ -1120,6 +1126,10 @@ objectModelConfiguration:
         $export: true
         $supportedFrom: v2.0.0-alpha.2
         $defaultAzureName: false
+        $operatorSpecProperties:
+          - name: NamingConvention
+            type: string
+            description: The uuid generation technique to use for any role without an explicit AzureName. One of 'stable' or 'random'. <br> +kubebuilder:validation:Enum={"random","stable"}
       RoleAssignmentProperties:
         DelegatedManagedIdentityResourceId:
           $armReference: true 
@@ -1132,6 +1142,10 @@ objectModelConfiguration:
         $export: true
         $supportedFrom: v2.4.0
         $defaultAzureName: false
+        $operatorSpecProperties:
+          - name: NamingConvention
+            type: string
+            description: The uuid generation technique to use for any role without an explicit AzureName. One of 'stable' or 'random'. <br> +kubebuilder:validation:Enum={"random","stable"}
       RoleAssignmentProperties:
         DelegatedManagedIdentityResourceId:
           $armReference: true
@@ -1143,6 +1157,10 @@ objectModelConfiguration:
         $export: true
         $supportedFrom: v2.8.0
         $defaultAzureName: false
+        $operatorSpecProperties:
+          - name: NamingConvention
+            type: string
+            description: The uuid generation technique to use for any role without an explicit AzureName. One of 'stable' or 'random'. <br> +kubebuilder:validation:Enum={"random","stable"}
       RoleDefinitionProperties:
         AssignableScopes:
           $armReference: true
@@ -2838,6 +2856,29 @@ objectModelConfiguration:
       ResourceGroup:
         $export: true
         $supportedFrom: v2.0.0-alpha.1
+  redhatopenshift:
+    2023-11-22:
+      OpenShiftCluster:
+        $export: true
+        $supportedFrom: v2.9.0
+      WorkerProfile:
+        SubnetId:
+          $armReference: true
+        DiskEncryptionSetId:
+          $armReference: true
+      MasterProfile:
+        SubnetId:
+          $armReference: true
+        DiskEncryptionSetId:
+          $armReference: true
+      ClusterProfile:
+        PullSecret:
+          $isSecret: true
+      ServicePrincipalProfile:
+        ClientSecret:
+          $isSecret: true
+        ClientId:
+          $importConfigMapMode: optional
   search:
     2022-09-01:
       SearchService:
